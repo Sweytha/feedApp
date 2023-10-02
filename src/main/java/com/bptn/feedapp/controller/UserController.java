@@ -3,6 +3,7 @@ package com.bptn.feedapp.controller;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bptn.feedapp.jdbc.UserBean;
+import com.bptn.feedapp.jpa.User;
 import com.bptn.feedapp.service.UserService;
 
 @RestController
@@ -34,14 +35,14 @@ public class UserController {
 	}
 	
 	@GetMapping("/")
-	public List<UserBean> listUsers() {
+	public List<User> listUsers() {
 		
 		logger.debug("The listUsers() method was invoked!");
 		return this.userService.listUsers();
 	}
 	
 	@GetMapping("/{username}")
-	public UserBean findByUsername(@PathVariable String username) {
+	public Optional<User> findByUsername(@PathVariable String username) {
 		
 		logger.debug("The findByUsername() method was invoked!, username={}", username);
 		return this.userService.findByUsername(username);
@@ -52,7 +53,7 @@ public class UserController {
 	@GetMapping("/{first}/{last}/{username}/{password}/{phone}/{emailId}")
 	public String createUser(@PathVariable String first, @PathVariable String last, @PathVariable String username, @PathVariable String password, @PathVariable String phone, @PathVariable String emailId) {
 		
-		UserBean user = new UserBean();
+		User user = new User();
 		
 		user.setFirstName(first);
 		user.setLastName(last);

@@ -1,38 +1,43 @@
 package com.bptn.feedapp.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.bptn.feedapp.jdbc.UserBean;
-import com.bptn.feedapp.jdbc.UserDao;
+import com.bptn.feedapp.jpa.User;
+import com.bptn.feedapp.repository.UserRepository;
 
 @Service
 public class UserService {
 
 	@Autowired
-	UserDao userDao;
+	UserRepository userRepository;
 
-	public List<UserBean> listUsers() {
+	public List<User> listUsers() {
 
-		//this calls listUsers() method from UserDao class
-		return this.userDao.listUsers();
+		//this calls findAll() method from CrudRepository(superInterface for
+		// JpaRepository)
+		//this is internally firing "Select * from "\"User\"";
+		return this.userRepository.findAll();
 	}
 
-	public UserBean findByUsername(String username) {
+	public Optional<User> findByUsername(String username) {
 
-		//this calls findByUsername() method from UserDao class
-		return this.userDao.findByUsername(username);
-		
+		// this calls findByUsername() method from UserRepository interface
+		//this is internally firing "Select * from "\"User\"" where "username"=?;
+		return this.userRepository.findByUsername(username);
+
 	}
-	
-	public void createUser(UserBean user) {
-		
-		//this calls createUser() method from UserDao class
-		this.userDao.createUser(user);
+
+	public void createUser(User user) {
+
+		// this calls createUser() method from CrudRepository(superInterface for
+		// JpaRepository)
+		// Insert operation for a new record
+		// or an update operation for an already inserted record
+		this.userRepository.save(user);
 	}
-	
-	
 
 }
