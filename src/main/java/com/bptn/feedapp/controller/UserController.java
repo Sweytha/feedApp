@@ -47,7 +47,7 @@ public class UserController {
 		return this.userService.findByUsername(username);
 		
 	}
-	
+
 	
 	@GetMapping("/{first}/{last}/{username}/{password}/{phone}/{emailId}")
 	public String createUser(@PathVariable String first, @PathVariable String last, @PathVariable String username, @PathVariable String password, @PathVariable String phone, @PathVariable String emailId) {
