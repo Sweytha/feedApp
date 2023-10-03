@@ -1,5 +1,7 @@
 package com.bptn.feedapp.service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,6 +40,20 @@ public class UserService {
 		// Insert operation for a new record
 		// or an update operation for an already inserted record
 		this.userRepository.save(user);
+	}
+	
+	public User signup(User user){
+		
+		user.setUsername(user.getUsername().toLowerCase());
+		user.setEmailId(user.getEmailId().toLowerCase());
+		user.setEmailVerified(false);
+		user.setCreatedOn(Timestamp.from(Instant.now()));
+		
+		//performing an insert operation
+		this.userRepository.save(user);
+		
+		return user;
+		
 	}
 
 }
