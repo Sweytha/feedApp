@@ -17,6 +17,9 @@ public class UserService {
 	@Autowired
 	UserRepository userRepository;
 	    
+	@Autowired
+	EmailService emailService;
+	    
 	
 
 	public List<User> listUsers() {
@@ -53,7 +56,8 @@ public class UserService {
 		
 		//performing an insert operation
 		this.userRepository.save(user);
-	    
+		
+		this.emailService.sendVerificationEmail(user);	    
 		
 		return user;
 		
