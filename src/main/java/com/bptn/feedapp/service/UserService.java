@@ -16,6 +16,8 @@ public class UserService {
 
 	@Autowired
 	UserRepository userRepository;
+	    
+	
 
 	public List<User> listUsers() {
 
@@ -51,6 +53,7 @@ public class UserService {
 		
 		//performing an insert operation
 		this.userRepository.save(user);
+	    
 		
 		return user;
 		
