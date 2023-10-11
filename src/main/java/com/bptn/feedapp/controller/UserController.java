@@ -1,5 +1,7 @@
 package com.bptn.feedapp.controller;
 
+import static org.springframework.http.HttpStatus.OK;
+
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
@@ -20,8 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bptn.feedapp.jpa.User;
 import com.bptn.feedapp.service.UserService;
-
-import static org.springframework.http.HttpStatus.OK;
+import com.fasterxml.jackson.databind.JsonNode;
 
 
 @CrossOrigin(exposedHeaders = "Authorization")
@@ -119,6 +120,22 @@ public class UserController {
 			logger.debug("Sending Reset Password Email, emailId: {}", emailId);
 			
 			this.userService.sendResetPasswordEmail(emailId);
+	}
+	
+	@PostMapping("/reset")
+	public void passwordReset(@RequestBody JsonNode json) {
+
+		logger.debug("Resetting Password, password: {}", json.get("password").asText());
+
+		this.userService.resetPassword(json.get("password").asText());
+	}
+	
+	@GetMapping("/get")
+	public User getUser() {
+			
+		logger.debug("Getting User Data");
+			
+		return this.userService.getUser();
 	}
 
 }
