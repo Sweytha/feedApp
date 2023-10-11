@@ -25,6 +25,7 @@ import com.bptn.feedapp.exception.domain.EmailExistException;
 import com.bptn.feedapp.exception.domain.EmailNotVerifiedException;
 import com.bptn.feedapp.exception.domain.UserNotFoundException;
 import com.bptn.feedapp.exception.domain.UsernameExistException;
+import com.bptn.feedapp.jpa.Profile;
 import com.bptn.feedapp.jpa.User;
 import com.bptn.feedapp.provider.ResourceProvider;
 import com.bptn.feedapp.repository.UserRepository;
@@ -223,6 +224,36 @@ public class UserService {
 		return this.userRepository.findByUsername(username)
 					            .map(currentUser -> this.updateUser(user, currentUser))
 					            .orElseThrow(()-> new UserNotFoundException(String.format("Username doesn't exist, %s", username)));
+	}
+	
+	private User updateUserProfile(Profile profile, User user) {
+
+		Profile currentProfile = user.getProfile();
+
+		if (Optional.ofNullable(currentProfile).isPresent()) {
+
+			this.updateValue(profile::getHeadline, currentProfile::setHeadline);
+			this.updateValue(profile::getBio, currentProfile::setBio);
+			this.updateValue(profile::getCity, currentProfile::setCity);
+			this.updateValue(profile::getCountry, currentProfile::setCountry);
+			this.updateValue(profile::getPicture, currentProfile::setPicture);
+		} 
+	    else {
+			user.setProfile(profile);
+			profile.setUser(user);
+		}
+
+		return this.userRepository.save(user);
+	}
+	
+	public User updateUserProfile(Profile profile) {
+		
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+		/* Get and Update User */	
+		return this.userRepository.findByUsername(username)
+		              .map(user -> this.updateUserProfile(profile, user))
+	                  .orElseThrow(()-> new UserNotFoundException(String.format("Username doesn't exist, %s", username)));
 	}
 
 }
