@@ -1,11 +1,16 @@
 package com.bptn.feedapp.service;
 
+import com.bptn.feedapp.provider.ResourceProvider;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import java.sql.Timestamp;
 import java.time.Instant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
-
+import com.bptn.feedapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,14 +23,12 @@ import com.bptn.feedapp.exception.domain.EmailNotVerifiedException;
 import com.bptn.feedapp.exception.domain.UserNotFoundException;
 import com.bptn.feedapp.exception.domain.UsernameExistException;
 import com.bptn.feedapp.jpa.User;
-import com.bptn.feedapp.provider.ResourceProvider;
-import com.bptn.feedapp.repository.UserRepository;
 import com.bptn.feedapp.security.JwtService;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import org.springframework.http.HttpHeaders;
 
 @Service
 public class UserService {
+	
+	final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	UserRepository userRepository;
@@ -142,6 +145,17 @@ public class UserService {
 		headers.add(AUTHORIZATION, this.jwtService.generateJwtToken(username,this.provider.getJwtExpiration()));
 
 		return headers;
+	}
+	
+	public void sendResetPasswordEmail(String emailId) {
+
+		Optional<User> opt = this.userRepository.findByEmailId(emailId);
+
+		if (opt.isPresent()) {
+			this.emailService.sendResetPasswordEmail(opt.get());
+		} else {
+			logger.debug("Email doesn't exist, {}", emailId);
+		}
 	}
 
 }
